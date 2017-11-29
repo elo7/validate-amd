@@ -1,0 +1,32 @@
+{
+  "name": "validate-amd",
+  "version": "1.0.0",
+  "homepage": "https://github.com/elo7/validate-amd",
+  "description": "",
+  "main": "validate.js",
+  "moduleType": [
+    "amd"
+  ],
+  "keywords": [
+    "form",
+    "js",
+    "validate"
+  ],
+  "authors": [
+    "Elo7"
+  ],
+  "license": "BSD",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "css"
+  ],
+  "dependencies": {
+    "doc-amd": "elo7/doc-amd"
+  },
+  "devDependencies": {
+    "async-define": "elo7/async-define"
+  }
+}

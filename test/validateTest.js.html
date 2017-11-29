@@ -1,0 +1,549 @@
+<html>
+	<head>
+		<title>Tests validate.js</title>
+		<meta charset="utf-8">
+		<link href="/css/mocha.css" type="text/css" rel="stylesheet"/>
+	</head>
+	<body>
+		<div id="mocha"></div>
+
+		<div id="test-suite">
+			<form id="submitOnChange" action="#">
+				<select id="selectChange">
+					<option value="1">1</option>
+					<option value="2">2</option>
+				</select>
+			</form>
+			<form id="submitOnBlur" action="#">
+				<input id="inputBlur" value='teste'>
+			</form>
+
+			<label id='labelAppendMessage'>
+				<input id="inputFocus">
+			</label>
+
+			<form id="formClearMessages" action="#">
+				<label id="label1">
+					<input name="test1" required>
+				</label>
+				<label id="label2">
+					<input type="email" name="test2" value="test">
+				</label>
+				<label id="label3">
+					<select name="test3" required>
+						<option value="">Select a option</option>
+						<option value="1">1</option>
+						<option value="2">2</option>
+					</select>
+				</label>
+				<label id="label4">
+					<input value="abc" name="test4" maxlength="2">
+				</label>
+				<label id="label5">
+					<input value="a" name="test5" min="3">
+				</label>
+				<label id="label6">
+					<input value="a" name="test6" pattern="[\d\.,]+">
+				</label>
+				<label id="label7">
+					<input value="a" required>
+				</label>
+				<label id="label8">
+					<input type="url" name="test8" value="test">
+				</label>
+				<label id="label9">
+					<input required pattern="\d{5}-\d{3}" name="test9">
+				</label>
+				<label id="label10">
+					<input value="abc" name="test10" max="2">
+				</label>
+				<label for="label11">
+					<textarea name="test11" required></textarea>
+				</label>
+			</form>
+
+			<form id="formSucess" action="#">
+				<input value="a" required>
+			</form>
+
+			<div id="form-shadow-root"></div>
+		</div>
+
+		<script src="/node_modules/mocha/mocha.js"></script>
+		<script src="/node_modules/chai/chai.js"></script>
+
+		<script src="/bower_components/async-define/async-define.js"></script>
+		<script src="/bower_components/events-amd/events-amd.js"></script>
+		<script src="/bower_components/doc-amd/doc.js"></script>
+		<script src="/validate.js"></script>
+		<script>
+			var expect = window.chai.expect;
+
+			mocha.ui("bdd");
+
+			var assertErrosFields = function(fields, errors) {
+				fields.forEach(function(field, i) {
+					expect(errors[i].message).to.deep.include(field.message);
+					expect(errors[i].field.first()).to.deep.include(field.input.first());
+				});
+			};
+
+			define(['doc', 'validate'], function($, Validate) {
+				describe('Validate', function(){
+					var validate;
+
+					beforeEach(function() {
+						validate = new Validate();
+					});
+
+					it('should contains all known methods', function(){
+						var current = [];
+						for (var methodName in validate) current.push(methodName);
+						expect(knownMethods()).to.include.members(current);
+						expect(current).to.include.members(knownMethods());
+					});
+
+					it('should submit form when event change was dispatch on element with specified selector', function(){
+						var called = false;
+						validate.submitOnChange('#selectChange');
+						$('#submitOnChange').on('submit', function(e){
+							e.preventDefault ? e.preventDefault() : e.returnValue = false;
+							called = true;
+						});
+						$('#selectChange').trigger('change');
+
+						expect(called).to.be.true;
+					});
+
+					it('should submit form when event change was dispatch on element passed as parameter', function(){
+						var called = false;
+						var $selectChange = $('#selectChange');
+
+						validate.submitOnChange($selectChange);
+
+						$('#submitOnChange').on('submit', function(e){
+							e.preventDefault ? e.preventDefault() : e.returnValue = false;
+							called = true;
+						});
+
+						$selectChange.trigger('change');
+
+						expect(called).to.be.true;
+					});
+
+					it('should call beforeSubmit when select tag event change was dispatch', function(){
+						var called = false;
+						validate.submitOnChange('#selectChange', function() {
+							called = true;
+						});
+
+						$('#submitOnChange').on('submit', function(e){
+							e.preventDefault ? e.preventDefault() : e.returnValue = false;
+						});
+
+						$('#selectChange').trigger('change');
+
+						expect(called).to.be.true;
+					});
+
+					it('should submit form when input tag event blur was dispatch', function(){
+						var called = false;
+						validate.submitOnBlur('#inputBlur');
+						validate.focus('#inputBlur');
+						$('#submitOnBlur').on('submit', function(e){
+							e.preventDefault ? e.preventDefault() : e.returnValue = false;
+							called = true;
+						});
+
+						$('#inputBlur').trigger('blur');
+
+						expect(called).to.be.true;
+					});
+
+					it('should focus element', function(){
+						validate.focus('#inputFocus');
+
+						expect($('#inputFocus').first()).to.equal(document.activeElement);
+					});
+
+					it('should return a message when the field is empty and required', function() {
+						var $field = $('input[name=test1]');
+						$field.val('');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ message: 'This field is required', field: $field });
+					});
+
+					it('should not return a message when the field is not empty and is required', function() {
+						var $field = $('input[name=test1]');
+						$field.val('Elo7');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ field: $field });
+					});
+
+					it('should not return a message when the field is not of type email and is filled with an invalid email', function() {
+						var $field = $('input[name=test1]');
+						$field.val('notanemail');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ field: $field });
+					});
+
+
+					it('should not return a message when the field is empty and is not required', function() {
+						var $field = $('input[name=test2]');
+						$field.val('');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ field: $field });
+					});
+
+					it('should return a message when the field is of type email and is filled with an invalid email', function() {
+						var $field = $('input[name=test2]');
+						$field.val('notanemail');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ message: 'Please enter a valid email address', field: $field });
+					});
+
+					it('should not return a message when the field is of type email and is filled with a valid email', function() {
+						var $field = $('input[name=test2]');
+						$field.val('valid@email.com');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ field: $field });
+					});
+
+					it('should not return a message when the field is of type email and is empty', function() {
+						var $field = $('input[name=test2]');
+						$field.val('');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ field: $field });
+					});
+
+					it('should return message when the select is required and value is empty', function() {
+						var $field = $('select[name=test3]');
+						var validate = new Validate();
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ message: 'This field is required', field: $field });
+					});
+
+					it('should not return message when the select is required and value is not empty', function() {
+						var $select = $('select[name=test3]');
+						$select.val('1');
+
+						var validate = new Validate();
+						var formMessage = validate.validateField($select);
+
+						expect(formMessage).to.eql({ field: $select });
+					});
+
+					it('should return a message when the field is filled with a value greater than maxlength', function() {
+						var $field = $('input[name=test4]');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ message: 'Please enter a value with max length less than or equal to 2', field: $field });
+					});
+
+					it('should not return a message when the field is filled with a value less than maxlength', function() {
+						var $field = $('input[name=test4]');
+
+						$field.val('a');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ field: $field });
+					});
+
+					it('should not return a message when the field is empty, is not required and has maxlength value', function() {
+						var $field = $('input[name=test4]');
+						$field.val('');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ field: $field });
+					});
+
+					it('should return a message when the field is filled with a value less than min', function() {
+						var $field = $('input[name=test5]');
+						$field.val('2');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ message: 'Please enter a value greater than or equal to 3', field: $field });
+					});
+
+					it('should not return a message when the field is filled with a value greater than min', function() {
+						var $field = $('input[name=test5]');
+						$field.val('4');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ field: $field });
+					});
+
+					it('should not return a message when the field is filled with a value equal to min', function() {
+						var $field = $('input[name=test5]');
+						$field.val('3');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ field: $field });
+					});
+
+					it('should not return a message when the field is empty, is not required and has min value', function() {
+						var $field = $('input[name=test5]');
+						$field.val('');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ field: $field });
+					});
+
+					it('should return a message when the field has min attribute and value is a text', function() {
+						var $field = $('input[name=test5]');
+						$field.val('elo');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ message: 'Please enter a value greater than or equal to 3', field: $field });
+					});
+
+					it('should return a message when the field has an invalid pattern', function() {
+						var $field = $('input[name=test6]');
+						$field.val('invalidpattern');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ message: 'Please enter a valid value', field: $field });
+					});
+
+					it('should not return a message when the field has a valid pattern', function() {
+						var $field = $('input[name=test6]');
+						$field.val('12.345,67');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ field: $field });
+					});
+
+					it('should not return a message when the field is empty and has pattern attribute', function() {
+						var $field = $('input[name=test6]');
+						$field.val('');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ field: $field });
+					});
+
+					it('should return a message when the field is of type url and is filled with an invalid url', function() {
+						var $field = $('input[name=test8]');
+						$field.val('notaurl@');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ message: 'Please enter a valid url', field: $field });
+					});
+
+					it('should not return a message when the field is of type url and is filled with a valid url', function() {
+						var $field = $('input[name=test8]');
+						$field.val('http://www.elo7.com.br');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ field: $field });
+					});
+
+					it('should not return a message when the field is of type url and is empty', function() {
+						var $field = $('input[name=test8]');
+						$field.val('');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ field: $field });
+					});
+
+					it('should return a message when the field is empty, is required and has pattern attribute', function() {
+						var $field = $('input[name=test9]');
+						$field.val('');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ message: 'This field is required', field: $field });
+					});
+
+					it('should return a message when the field is filled with a value greater than max', function() {
+						var $field = $('input[name=test10]');
+						$field.val('3');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ message: 'Please enter a value less than or equal to 2', field: $field });
+					});
+
+					it('should not return a message when the field is filled with a value less than max', function() {
+						var $field = $('input[name=test10]');
+						$field.val('1');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ field: $field });
+					});
+
+					it('should not return a message when the field is filled with a value equal to max', function() {
+						var $field = $('input[name=test10]');
+						$field.val('2');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ field: $field });
+					});
+
+					it('should not return a message when the field is empty, is not required and has max value', function() {
+						var $field = $('input[name=test10]');
+						$field.val('');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ field: $field });
+					});
+
+					it('should return a message when the field has max attribute and value is a text', function() {
+						var $field = $('input[name=test10]');
+						$field.val('elo');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ message: 'Please enter a value less than or equal to 2', field: $field });
+					});
+
+					it('should return message when the textarea is empty and required', function() {
+						var $field = $('textarea[name=test11]');
+						var validate = new Validate();
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ message: 'This field is required', field: $field });
+					});
+
+					it('should not return message when the textarea is not empty and is required', function() {
+						var $field = $('textarea[name=test11]');
+						var validate = new Validate();
+
+						$field.val('Elo7');
+
+						var formMessage = validate.validateField($field);
+
+						expect(formMessage).to.eql({ field: $field });
+					});
+
+					it('should error custom message for all elements', function () {
+						var messages = {
+							'required': 'Preencha este campo logo!',
+							'min': 'Insira no mínimo {0} caracteres, por favor!',
+							'max': 'Insira um valor menor ou igual a {0}, por favor!',
+							'maxlength': 'Insira no máximo {0} caracteres, por favor!',
+							'pattern': 'Insira um valor válido, por favor!',
+							'email': 'Insira um e-mail válido, por favor!',
+							'url': 'Insira uma url válida, por favor!'
+						};
+
+						var $required = $('input[name=test1]'),
+							$email = $('input[name=test2]'),
+							$select = $('select[name=test3]'),
+							$maxlength = $('input[name=test4]'),
+							$min = $('input[name=test5]'),
+							$pattern = $('input[name=test6]'),
+							$url = $('input[name=test8]'),
+							$patternRequired = $('input[name=test9]'),
+							$max = $('input[name=test10]'),
+							$textarea = $('textarea[name=test11]'),
+							called = false,
+							errors = [];
+
+						$required.val('');
+						$email.val('elo7@');
+						$select.val('');
+						$maxlength.val('abc');
+						$pattern.val('a');
+						$url.val('elo7.');
+						$textarea.val('');
+
+						validate = new Validate({ messages: messages });
+						errors = validate.validateForm('#formClearMessages');
+
+						var fields = [
+							{
+								input: $required,
+								message: 'Preencha este campo logo'
+							},
+							{
+								input: $email,
+								message: 'Insira um e-mail válido, por favor!'
+							},
+							{
+								input: $select,
+								message: 'Preencha este campo logo'
+							},
+							{
+								input: $maxlength,
+								message: 'Insira no máximo 2 caracteres, por favor!'
+							},
+							{
+								input: $min,
+								message: 'Insira no mínimo 3 caracteres, por favor!'
+							},
+							{
+								input: $pattern,
+								message: 'Insira um valor válido, por favor!'
+							},
+							{
+								input: $url,
+								message: 'Insira uma url válida, por favor!'
+							},
+							{
+								input: $patternRequired,
+								message: 'Preencha este campo logo!'
+							},
+							{
+								input: $max,
+								message: 'Insira um valor menor ou igual a 2, por favor!'
+							},
+							{
+								input: $textarea,
+								message: 'Preencha este campo logo'
+							}
+						];
+						assertErrosFields(fields, errors);
+					});
+				});
+			});
+		</script>
+		<script>
+			if (window.mochaPhantomJS) {
+				mochaPhantomJS.run();
+			} else {
+				mocha.run();
+			}
+			function knownMethods(){
+				return [
+					'submitOnChange',
+					'submitOnBlur',
+					'focus',
+					'validateForm',
+					'validateField'
+				];
+			}
+		</script>
+	</body>
+</html>
