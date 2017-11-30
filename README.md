@@ -26,64 +26,8 @@ Validate-amd also depends on [doc-amd](https://github.com/elo7/doc-amd).
 
 ## Methods
 
-#### submitOnChange
-`.submitOnChange(selectorOrDocElement[, callback])`
-
-###### Description:
-Submit the parent form when event **change** is triggered.
-
-###### Parameters:
-> selectorOrDocElement: doc-amd object or String //A CSS selector. Note that, if it is a class name with dots, the dots must be escaped. E.g.: doc(".my\\\\.class")
-
-> callback: Function() //A function to call before the event is triggered
-
-###### Sample:
-``` js
-define(['validate'], function(Validate) {
-
-  var validate = new Validate();
-
-  validate.submitOnChange($('#country')); //Submit the parent form when the country is selected
-  validate.submitOnChange('#country', function(){...}); //Run the callback function and then submit the parent form when the country is selected
-});
-```
-
-#### submitOnBlur
-`.submitOnBlur(selectorOrDocElement)`
-
-###### Description:
-Submit the parent form when event **blur** is triggered.
-
-###### Parameters:
-> selectorOrDocElement: doc-amd object or String //A CSS selector. Note that, if it is a class name with dots, the dots must be escaped. E.g.: doc(".my\\\\.class")
-
-###### Sample:
-``` js
-define(['validate'], function(Validate) {
-  var validate = new Validate();
-  validate.submitOnBlur('#name'); //Submit the parent form when the form element loses focus
-});
-```
-
-#### focus
-`.focus(selectorOrElements)`
-
-###### Description:
-Focus on selected element. If the device is mobile, it calls **scrollIntoView** function.
-
-###### Parameters:
-> selectorOrDocElement: doc-amd object or String //A CSS selector. Note that, if it is a class name with dots, the dots must be escaped. E.g.: doc(".my\\\\.class")
-
-###### Sample:
-``` js
-define(['validate'], function(Validate) {
-  var validate = new Validate();
-  validate.focus($('#input')); //Focus on the element #input
-});
-```
-
-#### validate
-`.validate(selectorOrDocElement)`
+#### validateForm
+`.validateForm(selectorOrDocElement)`
 
 ###### Description:
 Validate the form using almost all the html5 attributes validate spec. Returns a array with the error messages.
@@ -95,7 +39,7 @@ Validate the form using almost all the html5 attributes validate spec. Returns a
 ``` js
 define(['validate'], function(Validate) {
   var validate = new Validate(),
-      errorMessages = validate.validate('#form');
+      errorMessages = validate.validateForm('#form');
 
   errors.forEach(function(error) {
     if (error.messages) {
@@ -127,7 +71,7 @@ define(['validate'], function(Validate) {
 ```
 
 ### Customize messages
-new Validate({ messages: object });
+`new Validate({ messages: object });`
 
 ###### Description:
 Customize the error messages
