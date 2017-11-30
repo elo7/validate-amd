@@ -103,69 +103,6 @@
 						expect(current).to.include.members(knownMethods());
 					});
 
-					it('should submit form when event change was dispatch on element with specified selector', function(){
-						var called = false;
-						validate.submitOnChange('#selectChange');
-						$('#submitOnChange').on('submit', function(e){
-							e.preventDefault ? e.preventDefault() : e.returnValue = false;
-							called = true;
-						});
-						$('#selectChange').trigger('change');
-
-						expect(called).to.be.true;
-					});
-
-					it('should submit form when event change was dispatch on element passed as parameter', function(){
-						var called = false;
-						var $selectChange = $('#selectChange');
-
-						validate.submitOnChange($selectChange);
-
-						$('#submitOnChange').on('submit', function(e){
-							e.preventDefault ? e.preventDefault() : e.returnValue = false;
-							called = true;
-						});
-
-						$selectChange.trigger('change');
-
-						expect(called).to.be.true;
-					});
-
-					it('should call beforeSubmit when select tag event change was dispatch', function(){
-						var called = false;
-						validate.submitOnChange('#selectChange', function() {
-							called = true;
-						});
-
-						$('#submitOnChange').on('submit', function(e){
-							e.preventDefault ? e.preventDefault() : e.returnValue = false;
-						});
-
-						$('#selectChange').trigger('change');
-
-						expect(called).to.be.true;
-					});
-
-					it('should submit form when input tag event blur was dispatch', function(){
-						var called = false;
-						validate.submitOnBlur('#inputBlur');
-						validate.focus('#inputBlur');
-						$('#submitOnBlur').on('submit', function(e){
-							e.preventDefault ? e.preventDefault() : e.returnValue = false;
-							called = true;
-						});
-
-						$('#inputBlur').trigger('blur');
-
-						expect(called).to.be.true;
-					});
-
-					it('should focus element', function(){
-						validate.focus('#inputFocus');
-
-						expect($('#inputFocus').first()).to.equal(document.activeElement);
-					});
-
 					it('should return a message when the field is empty and required', function() {
 						var $field = $('input[name=test1]');
 						$field.val('');
@@ -537,9 +474,6 @@
 			}
 			function knownMethods(){
 				return [
-					'submitOnChange',
-					'submitOnBlur',
-					'focus',
 					'validateForm',
 					'validateField'
 				];
