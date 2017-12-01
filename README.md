@@ -93,7 +93,7 @@ define(['validate'], function(Validate) {
   }
 
   var validate = new Validate({ messages: custom_messages }),
-      errors = validate.validate('#form');
+      errors = validate.validateForm('#form');
 
       errors.forEach(function(error) {
         if (error.message) {
@@ -105,12 +105,13 @@ define(['validate'], function(Validate) {
 
 ###### Default messages:
 ``` txt
- required: This field is required
- min: Please enter a value greater than or equal to {0}
+ required: This field is required'
+ min: 'Please enter a value greater than or equal to {0}'
  max: 'Please enter a value greater than or equal to {0}'
- maxlength: Please enter a value with max length less than or equal to {0}
- pattern: Please enter a valid value
- email: Please enter a valid email address
+ maxlength: 'Please enter a value with max length less than or equal to {0}'
+ pattern: 'Please enter a valid value'
+ email: 'Please enter a valid email address'
+ url: 'Please enter a valid url'
 ```
 
 ## License
