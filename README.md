@@ -39,10 +39,10 @@ Validate the form using almost all the html5 attributes validate spec. Returns a
 ``` js
 define(['validate'], function(Validate) {
   var validate = new Validate(),
-      errorMessages = validate.validateForm('#form');
+      errors = validate.validateForm('#form');
 
   errors.forEach(function(error) {
-    if (error.messages) {
+    if (error.message) {
       // executes when there are errors
     }
   });
@@ -62,9 +62,9 @@ Validate individual fields. Returns an object with a error message.
 ``` js
 define(['validate'], function(Validate) {
   var validate = new Validate(),
-      errorMessage = validate.validateField($('input[name=example1]'));
+      error = validate.validateField($('input[name=example1]'));
 
-  if (errorMessage.messages) {
+  if (error.message) {
     // executes when there are errors
   }
 });
@@ -88,14 +88,15 @@ define(['validate'], function(Validate) {
       'max': 'Enter a value greater than or equal to {0}.',
       'maxlength': 'Enter a value with max length less than or equal to {0}.',
       'pattern': 'Enter a valid value.',
-      'email': 'Enter a valid email address.'
+      'email': 'Enter a valid email address.',
+      'url': 'Enter a valid url'
   }
 
-  var validate = new Form({ messages: custom_messages }),
+  var validate = new Validate({ messages: custom_messages }),
       errors = validate.validate('#form');
 
       errors.forEach(function(error) {
-        if (error.messages) {
+        if (error.message) {
          // executes when there are errors
         }
       });
