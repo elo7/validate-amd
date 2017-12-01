@@ -1,7 +1,7 @@
 /**
- * Form.
+ * Validate.
  *
- * Lib to help form manipulations
+ * Lib to help form validation
  *
  */
 
@@ -143,7 +143,7 @@ define('validate', ['doc'], function($) {
 		 * @param selectorOrElements CSS selector, DOM node, array with DOM nodes, HTMLCollection, NodeList or doc-amd object with selected forms
 		 *
 		 * Usage example:
-		 * 	form.validate(<FORM_ELEMENT>);
+		 * 	validate.validateForm(<FORM_ELEMENT>);
 		 */
 		this.validateForm = function(selectorOrElements) {
 			var $form = toDoc(selectorOrElements);
@@ -158,7 +158,7 @@ define('validate', ['doc'], function($) {
 		 * @param selectorOrElements CSS selector, DOM node, array with DOM nodes, HTMLCollection, NodeList or doc-amd object with selected form fields
 		 *
 		 * Usage example:
-		 * 	form.validateField(<FIELD_ELEMENT>);
+		 * 	validate.validateField(<FIELD_ELEMENT>);
 		 */
 		this.validateField = function(selectorOrElements) {
 			var $field = toDoc(selectorOrElements);
