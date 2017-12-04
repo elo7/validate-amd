@@ -71,7 +71,7 @@ define(['validate'], function(Validate) {
 Customize the error messages
 
 ###### Parameters:
-> object: Object //An object with the properties messages ("required", "min", "max", "maxlength", "pattern" or "email")
+> object: Object //An object with the properties messages ("required", "min", "max", "maxlength", "pattern", "email" or "url")
 
 ###### Sample:
 ``` js
