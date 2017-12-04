@@ -11,13 +11,7 @@ Then, we built it from scratch.
 
 ## Installation
 
-Via [Bower](http://bower.io):
-
-`bower install validate-amd`
-
-Via [npm](http://npmjs.com):
-
-`npm install validate-amd`
+`npm install elo7-validate-amd`
 
 ## Dependencies
 
