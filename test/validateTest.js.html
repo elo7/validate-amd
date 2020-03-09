@@ -56,30 +56,40 @@
 		<script src="/node_modules/elo7-doc-amd/doc.js"></script>
 		<script src="/validate.js"></script>
 		<script>
-			var expect = window.chai.expect;
-
-			mocha.ui("bdd");
-
-			var assertErrosFields = function(fields, errors) {
-				fields.forEach(function(field, i) {
-					expect(errors[i].message).to.deep.include(field.message);
-					expect(errors[i].field.first()).to.deep.include(field.input.first());
-				});
-			};
+			mocha.ui('bdd');
 
 			define(['doc', 'validate'], function($, Validate) {
-				describe('Validate', function(){
+				'use strict';
+
+				var expect = window.chai.expect;
+
+				var assertErrosFields = function(fields, errors) {
+					fields.forEach(function(field, i) {
+						expect(errors[i].message).to.deep.include(field.message);
+						expect(errors[i].field.first()).to.deep.include(field.input.first());
+					});
+				};
+
+				describe('Validate', function() {
 					var validate;
 
 					beforeEach(function() {
 						validate = new Validate();
 					});
 
-					it('should contains all known methods', function(){
+					it('should contains all known methods', function() {
+						var knownMethods = [
+							'validateForm',
+							'validateField',
+						];
 						var current = [];
-						for (var methodName in validate) current.push(methodName);
-						expect(knownMethods()).to.include.members(current);
-						expect(current).to.include.members(knownMethods());
+
+						for (var methodName in validate) {
+							current.push(methodName);
+						}
+
+						expect(knownMethods).to.include.members(current);
+						expect(current).to.include.members(knownMethods);
 					});
 
 					it('should return a message when the field is empty and required', function() {
@@ -366,7 +376,7 @@
 							'maxlength': 'Insira no máximo {0} caracteres, por favor!',
 							'pattern': 'Insira um valor válido, por favor!',
 							'email': 'Insira um e-mail válido, por favor!',
-							'url': 'Insira uma url válida, por favor!'
+							'url': 'Insira uma url válida, por favor!',
 						};
 
 						var $required = $('input[name=test1]'),
@@ -398,62 +408,51 @@
 						var fields = [
 							{
 								input: $required,
-								message: 'Preencha este campo logo'
+								message: 'Preencha este campo logo',
 							},
 							{
 								input: $email,
-								message: 'Insira um e-mail válido, por favor!'
+								message: 'Insira um e-mail válido, por favor!',
 							},
 							{
 								input: $select,
-								message: 'Preencha este campo logo'
+								message: 'Preencha este campo logo',
 							},
 							{
 								input: $maxlength,
-								message: 'Insira no máximo 2 caracteres, por favor!'
+								message: 'Insira no máximo 2 caracteres, por favor!',
 							},
 							{
 								input: $min,
-								message: 'Insira no mínimo 3 caracteres, por favor!'
+								message: 'Insira no mínimo 3 caracteres, por favor!',
 							},
 							{
 								input: $pattern,
-								message: 'Insira um valor válido, por favor!'
+								message: 'Insira um valor válido, por favor!',
 							},
 							{
 								input: $url,
-								message: 'Insira uma url válida, por favor!'
+								message: 'Insira uma url válida, por favor!',
 							},
 							{
 								input: $patternRequired,
-								message: 'Insira um valor válido, por favor!'
+								message: 'Insira um valor válido, por favor!',
 							},
 							{
 								input: $max,
-								message: 'Insira um valor menor ou igual a 2, por favor!'
+								message: 'Insira um valor menor ou igual a 2, por favor!',
 							},
 							{
 								input: $textarea,
-								message: 'Preencha este campo logo'
-							}
+								message: 'Preencha este campo logo',
+							},
 						];
 						assertErrosFields(fields, errors);
 					});
 				});
 			});
-		</script>
-		<script>
-			if (window.mochaPhantomJS) {
-				mochaPhantomJS.run();
-			} else {
-				mocha.run();
-			}
-			function knownMethods(){
-				return [
-					'validateForm',
-					'validateField'
-				];
-			}
+
+			mocha.run();
 		</script>
 	</body>
 </html>
