@@ -24,7 +24,7 @@ define('validate', ['doc'], function($) {
 		'maxlength': 'Please enter a value with max length less than or equal to {0}',
 		'pattern': 'Please enter a valid value',
 		'email': 'Please enter a valid email address',
-		'url': 'Please enter a valid url'
+		'url': 'Please enter a valid url',
 	};
 
 	var emailPattern = new RegExp(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
@@ -133,7 +133,8 @@ define('validate', ['doc'], function($) {
 		};
 
 		var toDoc = function(selectorOrElements) {
-			if (typeof selectorOrElements === 'object' && 'els' in selectorOrElements) { // doc-amd object
+			if (typeof selectorOrElements === 'object' && 'els' in selectorOrElements) {
+				// doc-amd object
 				return selectorOrElements;
 			}
 			return $(selectorOrElements);
