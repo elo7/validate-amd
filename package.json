@@ -1,6 +1,6 @@
 {
   "name": "elo7-validate-amd",
-  "version": "1.0.1-SNAPSHOT",
+  "version": "1.0.1",
   "description": "Small library to help form validation",
   "keywords": [
     "js",
