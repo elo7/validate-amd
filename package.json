@@ -25,7 +25,7 @@
     "terser": "4.7.0"
   },
   "dependencies": {
-    "elo7-doc-amd": "1.6.0",
+    "elo7-doc-amd": "1.7.0",
     "elo7-events-amd": "1.2.1"
   }
 }
