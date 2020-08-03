@@ -22,7 +22,7 @@
     "http-server": "0.12.3",
     "mocha": "7.1.2",
     "mocha-chrome": "2.2.0",
-    "terser": "4.7.0"
+    "terser": "5.0.0"
   },
   "dependencies": {
     "elo7-doc-amd": "1.6.0",
